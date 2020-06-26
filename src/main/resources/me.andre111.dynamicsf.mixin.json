@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "me.andre111.dynamicsf.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinSoundSystem",
+    "MixinSource"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

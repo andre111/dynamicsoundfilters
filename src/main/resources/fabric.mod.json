@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "dynamicsoundfilters",
+  "version": "${version}",
+
+  "name": "Dynamic Sound Filters",
+  "description": "Adds dynamic sound filters such as reverb in caves or muffled underwater sounds",
+  "authors": [
+    "andre111"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/dynamic-sound-filters",
+    "sources": "https://bitbucket.org/andre111/dynamicsoundfilters/src",
+    "issues": "https://bitbucket.org/andre111/dynamicsoundfilters/issues"
+  },
+  "icon": "icon.png",
+  "custom": {
+    "modmenu:clientsideOnly": true
+  },
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.andre111.dynamicsf.DynamicSoundFilters"
+    ],
+    "modmenu": [
+      "me.andre111.dynamicsf.config.ConfigScreen"
+    ]
+  },
+  "mixins": [
+    "me.andre111.dynamicsf.mixin.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
