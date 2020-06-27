@@ -19,7 +19,7 @@ import me.andre111.dynamicsf.config.Config;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 @Environment(EnvType.CLIENT)
 public class DynamicSoundFilters implements ModInitializer {
@@ -32,6 +32,6 @@ public class DynamicSoundFilters implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Config.loadData();
-		ClientTickCallback.EVENT.register(filterManager::updateGlobal);
+		ClientTickEvents.END_CLIENT_TICK.register(filterManager::updateGlobal);
 	}
 }
