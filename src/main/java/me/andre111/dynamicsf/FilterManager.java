@@ -18,7 +18,7 @@ package me.andre111.dynamicsf;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 
-import me.andre111.dynamicsf.filter.LiquidFilter;
+import me.andre111.dynamicsf.filter.ObstructionFilter;
 import me.andre111.dynamicsf.filter.ReverbFilter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -29,14 +29,14 @@ import net.minecraft.client.sound.SoundInstance;
 public class FilterManager {
 	public void updateGlobal(MinecraftClient client) {
 		ReverbFilter.updateGlobal(client);
-		LiquidFilter.updateGlobal(client);
+		ObstructionFilter.updateGlobal(client);
 	}
 	
 	public void updateSoundInstance(SoundInstance soundInstance, int sourceID) {
 		boolean includeReverb = ReverbFilter.updateSoundInstance(soundInstance);
-		boolean includeLiquid = LiquidFilter.updateSoundInstance(soundInstance);
+		boolean includeLowPass = ObstructionFilter.updateSoundInstance(soundInstance);
 		
-		AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, includeLiquid ? LiquidFilter.getID() : 0);
-		AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, includeReverb ? ReverbFilter.getSlot() : 0, 0, includeLiquid ? LiquidFilter.getID() : 0);
+		AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, includeLowPass ? ObstructionFilter.getID() : 0);
+		AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, includeReverb ? ReverbFilter.getSlot() : 0, 0, includeLowPass ? ObstructionFilter.getID() : 0);
 	}
 }

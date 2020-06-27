@@ -60,6 +60,10 @@ public class ReverbFilter {
 	private static float airAbsorptionGainHF = 0.99f;
 	private static float roomRolloffFactor = 0.0f;
 	private static int decayHFLimit = 1;
+	
+	//TODO: configurable
+	private static List<Material> HIGH_REVERB_MATERIALS = Arrays.asList(Material.STONE, Material.GLASS, Material.ICE, Material.DENSE_ICE, Material.METAL);
+	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(Material.WOOL, Material.CARPET, Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS, Material.COBWEB, Material.CAKE, Material.SPONGE, Material.SNOW_LAYER, Material.SNOW_BLOCK);
 
 	public static void updateGlobal(MinecraftClient client) {
 		if(client.world != null && client.player != null && client.isRunning()) {
@@ -150,9 +154,6 @@ public class ReverbFilter {
 		float lateReverbGainBase = Config.getData().reverbFilter.lateReverbGainBase;
 		float lateReverbGainMultiplier = Config.getData().reverbFilter.lateReverbGainMultiplier;
 		float lateReverbDelayMultiplier = Config.getData().reverbFilter.lateReverbDelayMultiplier;
-
-		List<Material> HIGH_REVERB_MATERIALS = Arrays.asList(Material.STONE, Material.GLASS, Material.ICE, Material.DENSE_ICE, Material.METAL);
-		List<Material> LOW_REVERB_MATERIALS = Arrays.asList(Material.WOOL, Material.CARPET, Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS, Material.COBWEB, Material.CAKE, Material.SPONGE, Material.SNOW_LAYER, Material.SNOW_BLOCK);
 
 		//TODO: config option to set base reverb per dimension (-> nether: 1.0f)
 		float baseReverb = 0.0f;

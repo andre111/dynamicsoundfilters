@@ -15,8 +15,6 @@
  */
 package me.andre111.dynamicsf.filter;
 
-import org.lwjgl.openal.EXTEfx;
-
 import me.andre111.dynamicsf.config.Config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
@@ -26,8 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
 public class LiquidFilter {
-	private static int id = -1;
-	
 	private static boolean enabled = false;
     private static float lowPassGain = 1.0f;
     private static float lowPassGainHF = 1.0f;
@@ -43,24 +39,21 @@ public class LiquidFilter {
 	}
 	
 	public static boolean updateSoundInstance(SoundInstance soundInstance) {
-		if(id == -1) {
-			id = EXTEfx.alGenFilters();
-		}
 		if(!enabled) return false;
 
         lowPassGain = Math.max(0, Math.min(lowPassGain, 1));
         lowPassGainHF = Math.max(0, Math.min(lowPassGainHF, 1));
         if(lowPassGain >= 1 && lowPassGainHF >= 1) return false;
-
-        EXTEfx.alFilteri(id, EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
-        EXTEfx.alFilterf(id, EXTEfx.AL_LOWPASS_GAIN, lowPassGain);
-        EXTEfx.alFilterf(id, EXTEfx.AL_LOWPASS_GAINHF, lowPassGainHF);
 		
 		return true;
 	}
 	
-	public static int getID() {
-		return id;
+	public static float getLowPassGain() {
+		return lowPassGain;
+	}
+
+	public static float getLowPassGainHF() {
+		return lowPassGainHF;
 	}
 	
 	private static void reset() {

@@ -38,5 +38,13 @@
     "dynamicsoundfilters.config.reverb.advanced.reflectionsdelaymultiplier": "Relections Delay Multiplier",
     "dynamicsoundfilters.config.reverb.advanced.latereverbgainbase": "Late Reverb Gain",
     "dynamicsoundfilters.config.reverb.advanced.latereverbgainmultiplier": "Late Reverb Gain Multiplier",
-    "dynamicsoundfilters.config.reverb.advanced.latereverbdelaymultiplier": "Late Reverb Delay Multiplier"
+    "dynamicsoundfilters.config.reverb.advanced.latereverbdelaymultiplier": "Late Reverb Delay Multiplier",
+
+    "dynamicsoundfilters.config.obstruction": "Obstruction Filter",
+    "dynamicsoundfilters.config.obstruction.enable": "Enabled",
+    "dynamicsoundfilters.config.obstruction.enable.tooltip": "Toggles the obstruction of sounds by solid blocks.",
+    "dynamicsoundfilters.config.obstruction.step": "Obstruction Per Block",
+    "dynamicsoundfilters.config.obstruction.step.tooltip": "How much volume is lowered per full obstrucing block.",
+    "dynamicsoundfilters.config.obstruction.max": "Max Obstruction",
+    "dynamicsoundfilters.config.obstruction.max.tooltip": "Limits maximum obstruction value."
 }

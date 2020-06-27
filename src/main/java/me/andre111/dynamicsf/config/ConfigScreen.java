@@ -232,6 +232,33 @@ public class ConfigScreen implements ModMenuApi {
 				}
 				reverbFilterCat.addEntry(advancedCat.build());
 			}
+			
+			ConfigCategory obstructionFilterCat = builder.getOrCreateCategory(new TranslatableText("dynamicsoundfilters.config.obstruction"));
+			{
+				obstructionFilterCat.addEntry(entryBuilder
+						.startBooleanToggle(new TranslatableText("dynamicsoundfilters.config.obstruction.enable"), Config.getData().obstructionFilter.enabled)
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.obstruction.enable.tooltip"))
+						.setDefaultValue(true)
+						.setSaveConsumer(b -> Config.getData().obstructionFilter.enabled = b)
+						.build());
+				
+				obstructionFilterCat.addEntry(entryBuilder
+						.startFloatField(new TranslatableText("dynamicsoundfilters.config.obstruction.step"), Config.getData().obstructionFilter.obstructionStep)
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.obstruction.step.tooltip"))
+						.setDefaultValue(0.1f)
+						.setMin(0.0f)
+						.setMax(1.0f)
+						.setSaveConsumer(f -> Config.getData().obstructionFilter.obstructionStep = f)
+						.build());
+				obstructionFilterCat.addEntry(entryBuilder
+						.startFloatField(new TranslatableText("dynamicsoundfilters.config.obstruction.max"), Config.getData().obstructionFilter.obstructionMax)
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.obstruction.max.tooltip"))
+						.setDefaultValue(0.98f)
+						.setMin(0.0f)
+						.setMax(1.0f)
+						.setSaveConsumer(f -> Config.getData().obstructionFilter.obstructionMax = f)
+						.build());
+			}
 
 			return builder.build();
 		};

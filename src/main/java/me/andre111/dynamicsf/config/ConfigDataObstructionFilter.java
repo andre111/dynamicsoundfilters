@@ -15,8 +15,9 @@
  */
 package me.andre111.dynamicsf.config;
 
-public class ConfigData {
-	public ConfigDataLiquidFilter liquidFilter = new ConfigDataLiquidFilter();
-	public ConfigDataReverbFilter reverbFilter = new ConfigDataReverbFilter();
-	public ConfigDataObstructionFilter obstructionFilter = new ConfigDataObstructionFilter();
+public class ConfigDataObstructionFilter {
+	public boolean enabled = true;
+	
+	public float obstructionStep = 0.1f;
+	public float obstructionMax = 0.98f;
 }
