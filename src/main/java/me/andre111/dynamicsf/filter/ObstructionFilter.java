@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.lwjgl.openal.EXTEfx;
 
@@ -37,6 +39,7 @@ public class ObstructionFilter {
 	
 	private static boolean enabled = false;
 	private static Map<SoundInstance, Float> obstructions = new HashMap<>();
+	private static Queue<SoundInstance> toScan = new ConcurrentLinkedQueue<>();
 	
 	//TODO: configurable
 	private static List<Material> HIGH_OBSTRUCTION_MATERIALS = Arrays.asList(Material.WOOL, Material.SPONGE);
@@ -66,10 +69,12 @@ public class ObstructionFilter {
 		
 		// process this filter
 		if(enabled && soundInstance.getAttenuationType() == AttenuationType.LINEAR) {
-			if(!obstructions.containsKey(soundInstance)) {
-				obstructions.put(soundInstance, 0.0f);
+			Float obstructionAmount = obstructions.get(soundInstance);
+			if(obstructionAmount == null) {
+				toScan.add(soundInstance);
+				obstructionAmount = 0.0f;
 			}
-			float obstructionAmount = obstructions.get(soundInstance);
+			
 			if(obstructionAmount > 0.01) {
 				lowPassGain = lowPassGain * (1.0f - obstructionAmount);
 				lowPassGainHF = lowPassGainHF * (1.0f - MathHelper.sqrt(obstructionAmount));
@@ -101,6 +106,10 @@ public class ObstructionFilter {
 		
 		// remove finished / stopped sounds
 		obstructions.entrySet().removeIf(entry -> !client.getSoundManager().isPlaying(entry.getKey()));
+		
+		// add new sounds
+		SoundInstance newSoundInstance = null;
+		while((newSoundInstance = toScan.poll()) != null) obstructions.put(newSoundInstance, 0.0f);
 		
 		// update sound obstructions
 		for(Map.Entry<SoundInstance, Float> e : obstructions.entrySet()) {
