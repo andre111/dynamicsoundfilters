@@ -44,6 +44,10 @@ public class ObstructionFilter {
 	//TODO: configurable
 	private static List<Material> HIGH_OBSTRUCTION_MATERIALS = Arrays.asList(Material.WOOL, Material.SPONGE);
 	
+	public static void reinit() {
+		id = EXTEfx.alGenFilters();
+	}
+	
 	public static void updateGlobal(MinecraftClient client) {
 		LiquidFilter.updateGlobal(client);
 		
@@ -56,7 +60,7 @@ public class ObstructionFilter {
 	
 	public static boolean updateSoundInstance(SoundInstance soundInstance) {
 		if(id == -1) {
-			id = EXTEfx.alGenFilters();
+			reinit();
 		}
 		
 		// process liquid filter

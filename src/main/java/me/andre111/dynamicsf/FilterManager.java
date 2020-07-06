@@ -38,5 +38,20 @@ public class FilterManager {
 		
 		AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, includeLowPass ? ObstructionFilter.getID() : 0);
 		AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, includeReverb ? ReverbFilter.getSlot() : 0, 0, includeLowPass ? ObstructionFilter.getID() : 0);
+		
+		// retry once on error
+		if(AL11.alGetError() != AL11.AL_NO_ERROR) {
+			ReverbFilter.reinit();
+			ObstructionFilter.reinit();
+
+			AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, includeLowPass ? ObstructionFilter.getID() : 0);
+			AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, includeReverb ? ReverbFilter.getSlot() : 0, 0, includeLowPass ? ObstructionFilter.getID() : 0);
+		}
+		
+		// report further errors
+		int error = AL11.alGetError();
+		if(error != AL11.AL_NO_ERROR) {
+			System.err.println("OpenAL error when applying sound filters: "+error);
+		}
 	}
 }

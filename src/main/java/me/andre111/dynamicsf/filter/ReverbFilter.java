@@ -65,6 +65,11 @@ public class ReverbFilter {
 	private static List<Material> HIGH_REVERB_MATERIALS = Arrays.asList(Material.STONE, Material.GLASS, Material.ICE, Material.DENSE_ICE, Material.METAL);
 	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(Material.WOOL, Material.CARPET, Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS, Material.COBWEB, Material.CAKE, Material.SPONGE, Material.SNOW_LAYER, Material.SNOW_BLOCK);
 
+	public static void reinit() {
+		id = EXTEfx.alGenEffects();
+		slot = EXTEfx.alGenAuxiliaryEffectSlots();
+	}
+	
 	public static void updateGlobal(MinecraftClient client) {
 		if(client.world != null && client.player != null && client.isRunning()) {
 			update(client);
@@ -75,8 +80,7 @@ public class ReverbFilter {
 
 	public static boolean updateSoundInstance(SoundInstance soundInstance) {
 		if(id == -1) {
-			id = EXTEfx.alGenEffects();
-			slot = EXTEfx.alGenAuxiliaryEffectSlots();
+			reinit();
 		}
 		if(!enabled) return false;
 		if(reflectionsDelay <= 0 && lateReverbDelay <= 0) return false;
