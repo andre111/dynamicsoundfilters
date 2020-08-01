@@ -15,6 +15,16 @@
  */
 package me.andre111.dynamicsf.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import me.andre111.dynamicsf.filter.ReverbFilter;
+import me.andre111.dynamicsf.filter.ReverbFilter.Reverb;
+import net.minecraft.util.Identifier;
+
 public class ConfigDataReverbFilter {
 	public boolean enabled = true;
 	
@@ -22,6 +32,9 @@ public class ConfigDataReverbFilter {
 	
 	public int maxBlocks = 1024;
 	public boolean checkSky = true;
+	
+	public List<String> dimensionBaseReverb = Arrays.asList("minecraft:the_nether;1.0");
+	public List<String> customBlockReverb = new ArrayList<>();
 	
 	public float density = 0.2f;
 	public float diffusion = 0.6f;
@@ -36,4 +49,40 @@ public class ConfigDataReverbFilter {
 	public float lateReverbGainBase = 1.26f;
 	public float lateReverbGainMultiplier = 0.1f;
 	public float lateReverbDelayMultiplier = 0.01f;
+	
+	
+	//-----------------------------------------------------------------------
+	private transient boolean cached = false;
+	private transient Map<Identifier, Float> dimensionBaseReverbMap = new HashMap<>();
+	private transient Map<Identifier, ReverbFilter.Reverb> customBlockReverbMap = new HashMap<>();
+	
+	private void calculateCache() {
+		if(!cached) {
+			dimensionBaseReverbMap = ConfigHelper.parseToMap(dimensionBaseReverb, Identifier::new, Float::parseFloat);
+			customBlockReverbMap = ConfigHelper.parseToMap(customBlockReverb, Identifier::new, ReverbFilter.Reverb::fromName);
+			
+			cached = true;
+		}
+	}
+	
+	public void recalculateCache() {
+		cached = false;
+		calculateCache();
+	}
+	
+	public float getDimensionBaseReverb(Identifier dimension) {
+		calculateCache();
+		
+		if(dimensionBaseReverbMap.containsKey(dimension)) {
+			return dimensionBaseReverbMap.get(dimension);
+		}
+		
+		return 0f;
+	}
+	
+	public Reverb getCustomBlockReverb(Identifier block) {
+		calculateCache();
+		
+		return customBlockReverbMap.get(block);
+	}
 }

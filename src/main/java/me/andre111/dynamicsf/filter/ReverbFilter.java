@@ -31,9 +31,11 @@ import net.minecraft.block.Material;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.Chunk;
 
@@ -159,11 +161,9 @@ public class ReverbFilter {
 		float lateReverbGainMultiplier = Config.getData().reverbFilter.lateReverbGainMultiplier;
 		float lateReverbDelayMultiplier = Config.getData().reverbFilter.lateReverbDelayMultiplier;
 
-		//TODO: config option to set base reverb per dimension (-> nether: 1.0f)
-		float baseReverb = 0.0f;
-		if(client.world.getDimension().hasCeiling()) {
-			baseReverb = 1.0f;
-		}
+		// get base reverb
+		Identifier dimension = client.world.getRegistryKey().getValue();
+		float baseReverb = Config.getData().reverbFilter.getDimensionBaseReverb(dimension);
 
 		if(enabled && tickCount++ == 20) {
 			tickCount = 0;
@@ -206,14 +206,30 @@ public class ReverbFilter {
 			double midReverb = 0.0;
 			double lowReverb = 0.0;
 			for (BlockState blockState : blocksFound) {
-				//TODO: config for custom block reverb overrides
-				//double customReverb = 0;
-				if (HIGH_REVERB_MATERIALS.contains(blockState.getMaterial())) {
-					highReverb += 1.0;
-				} else if (LOW_REVERB_MATERIALS.contains(blockState.getMaterial())) {
-					lowReverb += 1.0;
+				// custom block reverb overrides
+				Reverb customReverb = Config.getData().reverbFilter.getCustomBlockReverb(Registry.BLOCK.getId(blockState.getBlock()));
+				if(customReverb != null) {
+					switch(customReverb) {
+					case HIGH:
+						highReverb += 1.0;
+						break;
+					case LOW:
+						lowReverb += 1.0;
+						break;
+					case MID:
+					default:
+						midReverb += 1.0;
+						break;
+					}
 				} else {
-					midReverb += 1.0;
+					// material based reverb
+					if (HIGH_REVERB_MATERIALS.contains(blockState.getMaterial())) {
+						highReverb += 1.0;
+					} else if (LOW_REVERB_MATERIALS.contains(blockState.getMaterial())) {
+						lowReverb += 1.0;
+					} else {
+						midReverb += 1.0;
+					}
 				}
 			}
 			float decayFactor = baseReverb;
@@ -224,7 +240,7 @@ public class ReverbFilter {
 
 			// calculate room factor
 			int roomSize = visited.size();
-			float roomFactor = roomSize / (float )maxBlocks;
+			float roomFactor = roomSize / (float) maxBlocks;
 
 			// calculate sky factor
 			float skyFactor = 0;
@@ -233,7 +249,7 @@ public class ReverbFilter {
 				Direction[] directions = new Direction[] { Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
 				for(Direction direction : directions) {
 					if(hasSkyAbove(client.world, playerPos.offset(direction, random.nextInt(5) + 5))) skyFactor += 1;
-					if(hasSkyAbove(client.world, playerPos.offset(direction, random.nextInt(5) + 5).up(5))) skyFactor += 1;
+					if(hasSkyAbove(client.world, playerPos.offset(direction, random.nextInt(5) + 5).offset(Direction.UP, 5))) skyFactor += 1;
 				}
 			}
 			skyFactor = 1.0f - skyFactor / 9.0f;
@@ -271,5 +287,16 @@ public class ReverbFilter {
 		x = Math.max(0, Math.min(x, 15));
 		z = Math.max(0, Math.min(z, 15));
 		return heightMap != null && heightMap.get(x, z) <= pos.getY();
+	}
+	
+	public static enum Reverb {
+		HIGH,
+		MID,
+		LOW;
+		
+		public static Reverb fromName(String name) {
+			name = name.toUpperCase();
+			return Reverb.valueOf(name);
+		}
 	}
 }

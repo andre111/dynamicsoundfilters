@@ -15,6 +15,9 @@
  */
 package me.andre111.dynamicsf.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -109,8 +112,18 @@ public class ConfigScreen implements ModMenuApi {
 						.setSaveConsumer(f -> Config.getData().reverbFilter.reverbPercent = f)
 						.build());
 				
-				//TODO: block overrides
-				//TODO: dimension overrides
+				reverbFilterCat.addEntry(entryBuilder
+						.startStrList(new TranslatableText("dynamicsoundfilters.config.reverb.dimensions"), Config.getData().reverbFilter.dimensionBaseReverb)
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.dimensions.tooltip"))
+						.setDefaultValue(Arrays.asList("minecraft:the_nether;1.0"))
+						.setSaveConsumer(l -> { Config.getData().reverbFilter.dimensionBaseReverb = l; Config.getData().reverbFilter.recalculateCache(); })
+						.build());
+				reverbFilterCat.addEntry(entryBuilder
+						.startStrList(new TranslatableText("dynamicsoundfilters.config.reverb.blocks"), Config.getData().reverbFilter.customBlockReverb)
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.blocks.tooltip"))
+						.setDefaultValue(new ArrayList<>())
+						.setSaveConsumer(l -> { Config.getData().reverbFilter.customBlockReverb = l; Config.getData().reverbFilter.recalculateCache(); })
+						.build());
 				
 				SubCategoryBuilder scannerCat = entryBuilder.startSubCategory(new TranslatableText("dynamicsoundfilters.config.reverb.scanner"));
 				scannerCat.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.scanner.tooltip"));
@@ -132,6 +145,8 @@ public class ConfigScreen implements ModMenuApi {
 							.build());
 				}
 				reverbFilterCat.addEntry(scannerCat.build());
+				
+				
 				
 				SubCategoryBuilder advancedCat = entryBuilder.startSubCategory(new TranslatableText("dynamicsoundfilters.config.reverb.advanced"));
 				advancedCat.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.advanced.tooltip"));

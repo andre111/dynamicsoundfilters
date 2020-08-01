@@ -14,9 +14,6 @@
     "issues": "https://bitbucket.org/andre111/dynamicsoundfilters/issues"
   },
   "icon": "icon.png",
-  "custom": {
-    "modmenu:clientsideOnly": true
-  },
 
   "environment": "client",
   "entrypoints": {
