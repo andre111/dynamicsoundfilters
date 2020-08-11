@@ -114,13 +114,13 @@ public class ConfigScreen implements ModMenuApi {
 				
 				reverbFilterCat.addEntry(entryBuilder
 						.startStrList(new TranslatableText("dynamicsoundfilters.config.reverb.dimensions"), Config.getData().reverbFilter.dimensionBaseReverb)
-						.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.dimensions.tooltip"))
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.dimensions.tooltip1"), new TranslatableText("dynamicsoundfilters.config.reverb.dimensions.tooltip2"), new TranslatableText("dynamicsoundfilters.config.reverb.dimensions.tooltip3"), new TranslatableText("dynamicsoundfilters.config.reverb.dimensions.tooltip4"))
 						.setDefaultValue(Arrays.asList("minecraft:the_nether;1.0"))
 						.setSaveConsumer(l -> { Config.getData().reverbFilter.dimensionBaseReverb = l; Config.getData().reverbFilter.recalculateCache(); })
 						.build());
 				reverbFilterCat.addEntry(entryBuilder
 						.startStrList(new TranslatableText("dynamicsoundfilters.config.reverb.blocks"), Config.getData().reverbFilter.customBlockReverb)
-						.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.blocks.tooltip"))
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.reverb.blocks.tooltip1"), new TranslatableText("dynamicsoundfilters.config.reverb.blocks.tooltip2"), new TranslatableText("dynamicsoundfilters.config.reverb.blocks.tooltip3"))
 						.setDefaultValue(new ArrayList<>())
 						.setSaveConsumer(l -> { Config.getData().reverbFilter.customBlockReverb = l; Config.getData().reverbFilter.recalculateCache(); })
 						.build());
