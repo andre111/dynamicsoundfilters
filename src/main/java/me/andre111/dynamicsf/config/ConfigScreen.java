@@ -28,11 +28,6 @@ import net.minecraft.text.TranslatableText;
 
 public class ConfigScreen implements ModMenuApi {
 	@Override
-	public String getModId() {
-		return "dynamicsoundfilters";
-	}
-
-	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return parent -> {
 			ConfigBuilder builder = ConfigBuilder.create();
