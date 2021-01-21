@@ -1,6 +1,10 @@
 {
     "dynamicsoundfilters.config.title": "Dynamic Sound Filters Config",
     
+    "dynamicsoundfilters.config.general": "General",
+    "dynamicsoundfilters.config.general.ignored": "Ignored Sound Events",
+    "dynamicsoundfilters.config.general.ignored.tooltip": "Sound events in this list will not be filtered.",
+    
     "dynamicsoundfilters.config.liquid": "Liquid Filter",
     "dynamicsoundfilters.config.liquid.enable": "Enabled",
     "dynamicsoundfilters.config.liquid.enable.tooltip": "Toggles the low pass filter in liquids.",

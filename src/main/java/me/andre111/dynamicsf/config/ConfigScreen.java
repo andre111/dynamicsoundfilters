@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 André Schweiger
+ * Copyright (c) 2021 André Schweiger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,16 @@ public class ConfigScreen implements ModMenuApi {
 
 			builder.setSavingRunnable(Config::saveData);
 
+			ConfigCategory generalCat = builder.getOrCreateCategory(new TranslatableText("dynamicsoundfilters.config.general"));
+			{
+				generalCat.addEntry(entryBuilder
+						.startStrList(new TranslatableText("dynamicsoundfilters.config.general.ignored"), Config.getData().general.ignoredSoundEvents)
+						.setTooltip(new TranslatableText("dynamicsoundfilters.config.general.ignored.tooltip"))
+						.setDefaultValue(ConfigDataGeneral.DEFAULT_IGNORED_SOUND_EVENTS)
+						.setSaveConsumer(l -> { Config.getData().general.ignoredSoundEvents = l; Config.getData().general.recalculateCache(); })
+						.build());
+			}
+			
 			ConfigCategory liquidFilterCat = builder.getOrCreateCategory(new TranslatableText("dynamicsoundfilters.config.liquid"));
 			{
 				liquidFilterCat.addEntry(entryBuilder

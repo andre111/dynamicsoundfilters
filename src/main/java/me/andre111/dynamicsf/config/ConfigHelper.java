@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 André Schweiger
+ * Copyright (c) 2021 André Schweiger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
  */
 package me.andre111.dynamicsf.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import me.andre111.dynamicsf.DynamicSoundFilters;
@@ -44,5 +46,25 @@ public class ConfigHelper {
 		}
 		
 		return map;
+	}
+	
+	public static <K> Set<K> parseToSet(List<String> entries, Function<String, K> keyParser) {
+		Set<K> set = Collections.newSetFromMap(new HashMap<>());
+		
+		if(entries != null) {
+			for(String entry : entries) {
+				try {
+					if(entry == null) throw new RuntimeException();
+					
+					K key = keyParser.apply(entry);
+					
+					set.add(key);
+				} catch(RuntimeException e) {
+					DynamicSoundFilters.getLogger().error("Ignoring broken config entry: "+entry, e);
+				}
+			}
+		}
+		
+		return set;
 	}
 }

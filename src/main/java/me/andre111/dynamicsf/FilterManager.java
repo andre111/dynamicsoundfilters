@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 André Schweiger
+ * Copyright (c) 2021 André Schweiger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package me.andre111.dynamicsf;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 
+import me.andre111.dynamicsf.config.Config;
 import me.andre111.dynamicsf.filter.ObstructionFilter;
 import me.andre111.dynamicsf.filter.ReverbFilter;
 import net.fabricmc.api.EnvType;
@@ -33,6 +34,8 @@ public class FilterManager {
 	}
 	
 	public void updateSoundInstance(SoundInstance soundInstance, int sourceID) {
+		if(Config.getData().general.isIgnoredSoundEvent(soundInstance.getId())) return;
+		
 		boolean includeReverb = ReverbFilter.updateSoundInstance(soundInstance);
 		boolean includeLowPass = ObstructionFilter.updateSoundInstance(soundInstance);
 		
