@@ -41,7 +41,7 @@ import net.minecraft.util.math.Vec3d;
 public class MixinSoundSystem {
 
 	// DEV NOTE: use LocalCapture.PRINT to check for changed locals when update breaks
-	@Inject(at = @At(value="INVOKE", target="Lnet/minecraft/client/option/GameOptions;getSoundVolume(Lnet/minecraft/sound/SoundCategory;)F", ordinal=0), method = "Lnet/minecraft/client/sound/SoundSystem;tick()V", locals=LocalCapture.CAPTURE_FAILHARD)
+	@Inject(at = @At(value="INVOKE", target="Lnet/minecraft/client/options/GameOptions;getSoundVolume(Lnet/minecraft/sound/SoundCategory;)F", ordinal=0), method = "Lnet/minecraft/client/sound/SoundSystem;tick()V", locals=LocalCapture.CAPTURE_FAILHARD)
 	public void onTick(CallbackInfo ci, Iterator iterator, Map.Entry entry, Channel.SourceManager sourceManager, SoundInstance soundInstance) {
 		sourceManager.run(source -> {
 			SourceWithID sourceWithID = (SourceWithID) source;
