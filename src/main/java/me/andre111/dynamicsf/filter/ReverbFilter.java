@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 André Schweiger
+ * Copyright (c) 2021 Andre Schweiger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class ReverbFilter {
 	
 	//TODO: configurable
 	private static List<Material> HIGH_REVERB_MATERIALS = Arrays.asList(Material.STONE, Material.GLASS, Material.ICE, Material.DENSE_ICE, Material.METAL);
-	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(Material.WOOL, Material.CARPET, Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS, Material.COBWEB, Material.CAKE, Material.SPONGE, Material.SNOW_LAYER, Material.SNOW_BLOCK);
+	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(Material.WOOL, Material.CARPET, Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS, Material.COBWEB, Material.CAKE, Material.SPONGE, Material.SNOW_LAYER, Material.SNOW_BLOCK, Material.MOSS_BLOCK, Material.SCULK);
 
 	public static void reinit() {
 		id = EXTEfx.alGenEffects();
