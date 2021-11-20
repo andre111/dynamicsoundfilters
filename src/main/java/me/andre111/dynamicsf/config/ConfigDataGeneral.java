@@ -27,7 +27,10 @@ public class ConfigDataGeneral {
 			"minecraft:music.creative", "minecraft:music.credits", "minecraft:music.dragon", 
 			"minecraft:music.end", "minecraft:music.game", "minecraft:music.menu", "minecraft:music.nether.basalt_deltas", 
 			"minecraft:music.nether.nether_wastes", "minecraft:music.nether.soul_sand_valley", "minecraft:music.nether.crimson_forest", 
-			"minecraft:music.nether.warped_forest", "minecraft:music.under_water", 
+			"minecraft:music.nether.warped_forest", "minecraft:music.under_water", "minecraft:music.overworld.dripstone_caves",
+			"minecraft:music.overworld.frozen_peaks", "minecraft:music.overworld.grove", "minecraft:music.overworld.jagged_peaks",
+			"minecraft:music.overworld.lush_caves", "minecraft:music.overworld.meadow", "minecraft:music.overworld.snowy_slopes",
+			"minecraft:music.overworld.stony_peaks",
 			
 			"minecraft:ui.button.click", "minecraft:ui.toast.challenge_complete", "minecraft:ui.toast.in", "minecraft:ui.toast.out"));
 	
