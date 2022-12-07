@@ -31,11 +31,11 @@ import net.minecraft.block.Material;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.Chunk;
 
@@ -207,7 +207,7 @@ public class ReverbFilter {
 			double lowReverb = 0.0;
 			for (BlockState blockState : blocksFound) {
 				// custom block reverb overrides
-				Reverb customReverb = Config.getData().reverbFilter.getCustomBlockReverb(Registry.BLOCK.getId(blockState.getBlock()));
+				Reverb customReverb = Config.getData().reverbFilter.getCustomBlockReverb(Registries.BLOCK.getId(blockState.getBlock()));
 				if(customReverb != null) {
 					switch(customReverb) {
 					case HIGH:
