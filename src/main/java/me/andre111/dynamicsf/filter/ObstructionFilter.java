@@ -133,7 +133,7 @@ public class ObstructionFilter {
 		Vec3d currentPosD = soundPosD;
 		if(Double.isNaN(playerPosD.x) || Double.isNaN(playerPosD.y) || Double.isNaN(playerPosD.z)) return 0;
 		if(Double.isNaN(soundPosD.x) || Double.isNaN(soundPosD.y) || Double.isNaN(soundPosD.z)) return 0;
-		BlockPos playerPos = new BlockPos(playerPosD);
+		BlockPos playerPos = BlockPos.ofFloored(playerPosD);
 		BlockPos.Mutable currentPos = new BlockPos.Mutable(soundPosD.x, soundPosD.y, soundPosD.z);
 		
 		// check obstruction

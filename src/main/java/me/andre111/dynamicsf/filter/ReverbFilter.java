@@ -65,7 +65,19 @@ public class ReverbFilter {
 	
 	//TODO: configurable
 	private static List<Material> HIGH_REVERB_MATERIALS = Arrays.asList(Material.STONE, Material.GLASS, Material.ICE, Material.DENSE_ICE, Material.METAL);
-	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(Material.WOOL, Material.CARPET, Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS, Material.COBWEB, Material.CAKE, Material.SPONGE, Material.SNOW_LAYER, Material.SNOW_BLOCK, Material.MOSS_BLOCK, Material.SCULK);
+	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(
+			// wool
+			Material.WOOL, Material.CARPET, 
+			// leaves and plants
+			Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, 
+			Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS,
+			Material.MOSS_BLOCK, Material.SCULK,
+			// wood
+			Material.WOOD, Material.NETHER_WOOD,
+			// random stuff
+			Material.COBWEB, Material.CAKE, Material.SPONGE, 
+			// snow
+			Material.SNOW_LAYER, Material.SNOW_BLOCK, Material.POWDER_SNOW);
 
 	public static void reinit() {
 		id = EXTEfx.alGenEffects();
