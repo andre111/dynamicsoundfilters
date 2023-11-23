@@ -23,9 +23,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonWriter;
+
+import net.minecraft.util.Identifier;
 
 public class Config {
-	private static Gson gson = new Gson();
+	private static Gson gson;
+	static {
+		gson = new GsonBuilder()
+				.registerTypeAdapter(Identifier.class, new Identifier.Serializer())
+				.create();
+	}
+	
 	private static ConfigData data = new ConfigData();
 	
 	public static ConfigData getData() {
@@ -56,8 +66,9 @@ public class Config {
 			}
 		}
 		
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-			gson.toJson(data, writer);
+		try(JsonWriter writer = new JsonWriter(new BufferedWriter(new FileWriter(file)))) {
+			writer.setIndent("    ");
+			gson.toJson(data, ConfigData.class, writer);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -28,12 +28,17 @@ import net.minecraft.client.sound.SoundInstance;
 
 @Environment(EnvType.CLIENT)
 public class FilterManager {
+	private boolean disabled = false;
+	
 	public void updateGlobal(MinecraftClient client) {
+		if(disabled) return;
+		
 		ReverbFilter.updateGlobal(client);
 		ObstructionFilter.updateGlobal(client);
 	}
 	
 	public void updateSoundInstance(SoundInstance soundInstance, int sourceID) {
+		if(disabled) return;
 		if(Config.getData().general.isIgnoredSoundEvent(soundInstance.getId())) return;
 		
 		boolean includeReverb = ReverbFilter.updateSoundInstance(soundInstance);
@@ -43,7 +48,11 @@ public class FilterManager {
 		AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, includeReverb ? ReverbFilter.getSlot() : 0, 0, includeLowPass ? ObstructionFilter.getID() : 0);
 		
 		// retry once on error
-		if(AL11.alGetError() != AL11.AL_NO_ERROR) {
+		int error = AL11.alGetError();
+		if(error != AL11.AL_NO_ERROR) {
+			DynamicSoundFilters.getLogger().warn("OpenAL error when applying sound filters: "+error);
+			DynamicSoundFilters.getLogger().warn("Retrying...");
+			
 			ReverbFilter.reinit();
 			ObstructionFilter.reinit();
 
@@ -52,9 +61,11 @@ public class FilterManager {
 		}
 		
 		// report further errors
-		int error = AL11.alGetError();
+		error = AL11.alGetError();
 		if(error != AL11.AL_NO_ERROR) {
-			System.err.println("OpenAL error when applying sound filters: "+error);
+			DynamicSoundFilters.getLogger().error("OpenAL error when applying sound filters: "+error);
+			DynamicSoundFilters.getLogger().error("Cannot apply filters - disabling");
+			disabled = true;
 		}
 	}
 }

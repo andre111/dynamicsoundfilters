@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'fabric-loom' version '1.4-SNAPSHOT'
 	id 'org.cadixdev.licenser' version '0.6.1'
 }
 
@@ -11,6 +11,7 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+	mavenLocal()
     maven { 
     	url "https://maven.shedaniel.me/" 
     }

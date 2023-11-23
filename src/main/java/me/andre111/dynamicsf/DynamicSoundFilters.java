@@ -15,8 +15,9 @@
  */
 package me.andre111.dynamicsf;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 
 import me.andre111.dynamicsf.config.Config;
 import net.fabricmc.api.EnvType;
@@ -27,7 +28,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 @Environment(EnvType.CLIENT)
 public class DynamicSoundFilters implements ModInitializer {
 	private static final FilterManager FILTER_MANAGER = new FilterManager();
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogUtils.getLogger();
 	
 	public static FilterManager getFilterManager() {
 		return FILTER_MANAGER;

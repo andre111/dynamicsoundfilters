@@ -15,9 +15,7 @@
  */
 package me.andre111.dynamicsf.filter;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,10 +24,11 @@ import org.lwjgl.openal.EXTEfx;
 
 import me.andre111.dynamicsf.config.Config;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundInstance.AttenuationType;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -41,11 +40,14 @@ public class ObstructionFilter {
 	private static Map<SoundInstance, Float> obstructions = new HashMap<>();
 	private static Queue<SoundInstance> toScan = new ConcurrentLinkedQueue<>();
 	
-	//TODO: configurable
-	private static List<Material> HIGH_OBSTRUCTION_MATERIALS = Arrays.asList(Material.WOOL, Material.SPONGE);
-	
 	public static void reinit() {
+		if(id > 0) EXTEfx.alDeleteFilters(id);
+		
 		id = EXTEfx.alGenFilters();
+		if(id <= 0) return;
+		
+		// set fixed parameters
+        EXTEfx.alFilteri(id, EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
 	}
 	
 	public static void updateGlobal(MinecraftClient client) {
@@ -59,9 +61,7 @@ public class ObstructionFilter {
 	}
 	
 	public static boolean updateSoundInstance(SoundInstance soundInstance) {
-		if(id == -1) {
-			reinit();
-		}
+		if(id == -1) reinit();
 		
 		// process liquid filter
 		float lowPassGain = 1.0f;
@@ -84,12 +84,11 @@ public class ObstructionFilter {
 				lowPassGainHF = lowPassGainHF * (1.0f - MathHelper.sqrt(obstructionAmount));
 			}
 		}
-
-        lowPassGain = Math.max(0, Math.min(lowPassGain, 1));
-        lowPassGainHF = Math.max(0, Math.min(lowPassGainHF, 1));
 		if(lowPassGain >= 1.0f && lowPassGainHF >= 1.0f) return false;
+
+        lowPassGain = MathHelper.clamp(lowPassGain, EXTEfx.AL_LOWPASS_MIN_GAIN, EXTEfx.AL_LOWPASS_MAX_GAIN);
+        lowPassGainHF = MathHelper.clamp(lowPassGainHF, EXTEfx.AL_LOWPASS_MIN_GAINHF, EXTEfx.AL_LOWPASS_MAX_GAINHF);
 		
-        EXTEfx.alFilteri(id, EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
         EXTEfx.alFilterf(id, EXTEfx.AL_LOWPASS_GAIN, lowPassGain);
         EXTEfx.alFilterf(id, EXTEfx.AL_LOWPASS_GAINHF, lowPassGainHF);
         
@@ -107,6 +106,8 @@ public class ObstructionFilter {
 
 	private static void update(MinecraftClient client) {
 		enabled = Config.getData().obstructionFilter.enabled;
+		if(!enabled) return;
+		if(id == -1) reinit();
 		
 		// remove finished / stopped sounds
 		obstructions.entrySet().removeIf(entry -> !client.getSoundManager().isPlaying(entry.getKey()));
@@ -162,7 +163,8 @@ public class ObstructionFilter {
 			// check for obstruction and add amount
 			BlockState blockState = client.world.getBlockState(currentPos);
 			if(blockState.isFullCube(client.world, currentPos)) {
-				float newObstruction = HIGH_OBSTRUCTION_MATERIALS.contains(blockState.getMaterial()) ? obstructionStep * 2.0f : obstructionStep;
+				Identifier blockID = Registries.BLOCK.getId(blockState.getBlock());
+				float newObstruction = Config.getData().obstructionFilter.highObstructionBlocks.contains(blockID) ? obstructionStep * 2.0f : obstructionStep;
 				obstruction += newObstruction * currentPosD.distanceTo(prevPosD);
 				if(obstruction > obstructionMax) return obstructionMax;
 			}

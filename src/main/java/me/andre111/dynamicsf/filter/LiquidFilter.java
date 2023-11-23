@@ -40,11 +40,7 @@ public class LiquidFilter {
 	
 	public static boolean updateSoundInstance(SoundInstance soundInstance) {
 		if(!enabled) return false;
-
-        lowPassGain = Math.max(0, Math.min(lowPassGain, 1));
-        lowPassGainHF = Math.max(0, Math.min(lowPassGainHF, 1));
         if(lowPassGain >= 1 && lowPassGainHF >= 1) return false;
-		
 		return true;
 	}
 	
@@ -90,6 +86,10 @@ public class LiquidFilter {
 			// interpolate values
             lowPassGain = (targetLowPassGain + lowPassGain) / 2.0f;
             lowPassGainHF = (targetLowPassGainHF + lowPassGainHF) / 2.0f;
+
+			// clamp values
+            lowPassGain = Math.max(0, Math.min(lowPassGain, 1));
+            lowPassGainHF = Math.max(0, Math.min(lowPassGainHF, 1));
 		}
 	}
 }

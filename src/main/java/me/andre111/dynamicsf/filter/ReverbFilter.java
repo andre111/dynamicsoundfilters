@@ -16,7 +16,6 @@
 package me.andre111.dynamicsf.filter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -27,7 +26,6 @@ import org.lwjgl.openal.EXTEfx;
 
 import me.andre111.dynamicsf.config.Config;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.world.ClientWorld;
@@ -60,26 +58,12 @@ public class ReverbFilter {
 	private static float lateReverbGain = 0.0f;
 	private static float lateReverbDelay = 0.0f;
 	private static float airAbsorptionGainHF = 0.99f;
-	private static float roomRolloffFactor = 0.0f;
 	private static int decayHFLimit = 1;
-	
-	//TODO: configurable
-	private static List<Material> HIGH_REVERB_MATERIALS = Arrays.asList(Material.STONE, Material.GLASS, Material.ICE, Material.DENSE_ICE, Material.METAL);
-	private static List<Material> LOW_REVERB_MATERIALS = Arrays.asList(
-			// wool
-			Material.WOOL, Material.CARPET, 
-			// leaves and plants
-			Material.LEAVES, Material.PLANT, Material.UNDERWATER_PLANT, Material.REPLACEABLE_PLANT, 
-			Material.REPLACEABLE_UNDERWATER_PLANT, Material.SOLID_ORGANIC, Material.GOURD, Material.CACTUS,
-			Material.MOSS_BLOCK, Material.SCULK,
-			// wood
-			Material.WOOD, Material.NETHER_WOOD,
-			// random stuff
-			Material.COBWEB, Material.CAKE, Material.SPONGE, 
-			// snow
-			Material.SNOW_LAYER, Material.SNOW_BLOCK, Material.POWDER_SNOW);
 
 	public static void reinit() {
+		if(id > 0) EXTEfx.alDeleteEffects(id);
+		if(slot > 0) EXTEfx.alDeleteAuxiliaryEffectSlots(slot);
+		
 		id = EXTEfx.alGenEffects();
 		slot = EXTEfx.alGenAuxiliaryEffectSlots();
 	}
@@ -93,50 +77,10 @@ public class ReverbFilter {
 	}
 
 	public static boolean updateSoundInstance(SoundInstance soundInstance) {
-		if(id == -1) {
-			reinit();
-		}
 		if(!enabled) return false;
 		if(reflectionsDelay <= 0 && lateReverbDelay <= 0) return false;
-
-		if(soundInstance.getAttenuationType() == SoundInstance.AttenuationType.LINEAR) {
-			roomRolloffFactor = 2.0f / (Math.max(soundInstance.getVolume(), 1.0f) + 2.0f);
-		} else {
-			roomRolloffFactor = 0.0f;
-		}
-
-		density = Math.max(0.0f, Math.min(density, 1.0f));
-		diffusion = Math.max(0.0f, Math.min(diffusion, 1.0f));
-		gain = Math.max(0.0f, Math.min(gain, 1.0f));
-		gainHF = Math.max(0.0f, Math.min(gainHF, 1.0f));
-		decayTime = Math.max(0.1f, Math.min(decayTime, 20.0f));
-		decayHFRatio = Math.max(0.1f, Math.min(decayHFRatio, 2.0f));
-		reflectionsGain = Math.max(0.0f, Math.min(reflectionsGain, 3.16f));
-		reflectionsDelay = Math.max(0.0f, Math.min(reflectionsDelay, 0.3f));
-		lateReverbGain = Math.max(0.0f, Math.min(lateReverbGain, 10.0f));
-		lateReverbDelay = Math.max(0.0f, Math.min(lateReverbDelay, 0.1f));
-		airAbsorptionGainHF = Math.max(0.892f, Math.min(airAbsorptionGainHF, 1.0f));
-		roomRolloffFactor = Math.max(0.0f, Math.min(roomRolloffFactor, 10.0f));
-		decayHFLimit = Math.max(0, Math.min(decayHFLimit, 1));
-
-		EXTEfx.alAuxiliaryEffectSlotf(slot, EXTEfx.AL_EFFECTSLOT_GAIN, 0);
-		EXTEfx.alEffecti(id, EXTEfx.AL_EFFECT_TYPE, EXTEfx.AL_EFFECT_REVERB);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DENSITY, density);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DIFFUSION, diffusion);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_GAIN, gain);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_GAINHF, gainHF);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DECAY_TIME, decayTime);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DECAY_HFRATIO, decayHFRatio);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_REFLECTIONS_GAIN, reflectionsGain);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_REFLECTIONS_DELAY, reflectionsDelay);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_LATE_REVERB_GAIN, lateReverbGain);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_LATE_REVERB_DELAY, lateReverbDelay);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_AIR_ABSORPTION_GAINHF, airAbsorptionGainHF);
-		EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_ROOM_ROLLOFF_FACTOR, roomRolloffFactor);
-		EXTEfx.alEffecti(id, EXTEfx.AL_REVERB_DECAY_HFLIMIT, decayHFLimit);
-		EXTEfx.alAuxiliaryEffectSloti(slot, EXTEfx.AL_EFFECTSLOT_EFFECT, id);
-		EXTEfx.alAuxiliaryEffectSlotf(slot, EXTEfx.AL_EFFECTSLOT_GAIN, 1);
-
+		if(id == -1) reinit();
+		if(id <= 0 || slot <= 0) return false;
 		return true;
 	}
 
@@ -157,7 +101,14 @@ public class ReverbFilter {
 		lateReverbGain = 0;
 		lateReverbDelay = 0;
 		airAbsorptionGainHF = Config.getData().reverbFilter.airAbsorptionGainHF;
-		roomRolloffFactor = 0.0f;
+		
+		density = MathHelper.clamp(density, EXTEfx.AL_REVERB_MIN_DENSITY, EXTEfx.AL_REVERB_MAX_DENSITY);
+		diffusion = MathHelper.clamp(diffusion, EXTEfx.AL_REVERB_MIN_DIFFUSION, EXTEfx.AL_REVERB_MAX_DIFFUSION);
+		gain = MathHelper.clamp(gain, EXTEfx.AL_REVERB_MIN_GAIN, EXTEfx.AL_REVERB_MAX_GAIN);
+		gainHF = MathHelper.clamp(gainHF, EXTEfx.AL_REVERB_MIN_GAINHF, EXTEfx.AL_REVERB_MAX_GAINHF);
+		decayHFRatio = MathHelper.clamp(decayHFRatio, EXTEfx.AL_REVERB_MIN_DECAY_HFRATIO, EXTEfx.AL_REVERB_MAX_DECAY_HFRATIO);
+		airAbsorptionGainHF = MathHelper.clamp(gainHF, EXTEfx.AL_REVERB_MIN_AIR_ABSORPTION_GAINHF, EXTEfx.AL_REVERB_MAX_AIR_ABSORPTION_GAINHF);
+		decayHFLimit = MathHelper.clamp(decayHFLimit, EXTEfx.AL_REVERB_MIN_DECAY_HFLIMIT, EXTEfx.AL_REVERB_MAX_DECAY_HFLIMIT);
 	}
 
 	private static void update(MinecraftClient client) {
@@ -179,6 +130,8 @@ public class ReverbFilter {
 
 		if(enabled && tickCount++ == 20) {
 			tickCount = 0;
+			
+			if(id == -1) reinit();
 
 			// scan surroundings
 			BlockPos playerPos = new BlockPos(
@@ -190,7 +143,7 @@ public class ReverbFilter {
 			// sample random blocks in surroundings
 			Random random = new Random();
 			Set<BlockPos> visited = new TreeSet<>();
-			List<BlockState> blocksFound = new ArrayList<>();
+			List<Identifier> blocksFound = new ArrayList<>();
 			List<BlockPos> toVisit = new LinkedList<>();
 			toVisit.add(playerPos);
 			for (int i = 0; i < maxBlocks && !toVisit.isEmpty(); ++i) {
@@ -199,16 +152,16 @@ public class ReverbFilter {
 				for(Direction direction : Direction.values()) {
 					BlockPos pos = current.offset(direction);
 					BlockState blockState = client.world.getBlockState(pos);
-					Material material = blockState.getMaterial();
-					if (!material.blocksMovement()) {
+					Identifier blockID = Registries.BLOCK.getId(blockState.getBlock());
+					if (!blockState.isSolidBlock(client.world, pos)) {
 						if (!visited.contains(pos) && !toVisit.contains(pos)) {
 							toVisit.add(pos);
 						}
-						if (!blockState.isAir() && material != Material.WATER && material != Material.LAVA) {
-							blocksFound.add(blockState);
+						if (!blockState.isAir() && blockState.getFluidState().isEmpty()) {
+							blocksFound.add(blockID);
 						}
 					} else {
-						blocksFound.add(blockState);
+						blocksFound.add(blockID);
 					}
 				}
 			}
@@ -217,31 +170,13 @@ public class ReverbFilter {
 			double highReverb = 0.0;
 			double midReverb = 0.0;
 			double lowReverb = 0.0;
-			for (BlockState blockState : blocksFound) {
-				// custom block reverb overrides
-				Reverb customReverb = Config.getData().reverbFilter.getCustomBlockReverb(Registries.BLOCK.getId(blockState.getBlock()));
-				if(customReverb != null) {
-					switch(customReverb) {
-					case HIGH:
-						highReverb += 1.0;
-						break;
-					case LOW:
-						lowReverb += 1.0;
-						break;
-					case MID:
-					default:
-						midReverb += 1.0;
-						break;
-					}
+			for (Identifier blockID : blocksFound) {
+				if(Config.getData().reverbFilter.lowReverbBlocks.contains(blockID)) {
+					lowReverb += 1.0;
+				} else if(Config.getData().reverbFilter.highReverbBlocks.contains(blockID)) {
+					highReverb += 1.0;
 				} else {
-					// material based reverb
-					if (HIGH_REVERB_MATERIALS.contains(blockState.getMaterial())) {
-						highReverb += 1.0;
-					} else if (LOW_REVERB_MATERIALS.contains(blockState.getMaterial())) {
-						lowReverb += 1.0;
-					} else {
-						midReverb += 1.0;
-					}
+					midReverb += 1.0;
 				}
 			}
 			float decayFactor = baseReverb;
@@ -266,8 +201,8 @@ public class ReverbFilter {
 			}
 			skyFactor = 1.0f - skyFactor / 9.0f;
 			skyFactor *= skyFactor;
-
-
+			
+			//DynamicSoundFilters.getLogger().info(highReverb + " " + midReverb + " " + lowReverb + " -> " + decayFactor + " " + roomFactor + " " + skyFactor);
 
 			// interpolate values
 			decayFactor = (decayFactor + prevDecayFactor) / 2.0f;
@@ -286,6 +221,37 @@ public class ReverbFilter {
 			reflectionsDelay = reflectionDelayMultiplier * roomFactor;
 			lateReverbGain = reverbPercent * (lateReverbGainBase + lateReverbGainMultiplier * roomFactor);
 			lateReverbDelay = lateReverbDelayMultiplier * roomFactor;
+			
+			//DynamicSoundFilters.getLogger().info(" => " + decayTime + " " + reflectionsGain + " " + reflectionsDelay + " " + lateReverbGain + " " + lateReverbDelay);
+			
+			// clamp values
+			
+			decayTime = MathHelper.clamp(decayTime, EXTEfx.AL_REVERB_MIN_DECAY_TIME, EXTEfx.AL_REVERB_MAX_DECAY_TIME);
+			reflectionsGain = MathHelper.clamp(reflectionsGain, EXTEfx.AL_REVERB_MIN_REFLECTIONS_GAIN, EXTEfx.AL_REVERB_MAX_REFLECTIONS_GAIN);
+			reflectionsDelay = MathHelper.clamp(reflectionsDelay, EXTEfx.AL_REVERB_MIN_REFLECTIONS_DELAY, EXTEfx.AL_REVERB_MAX_REFLECTIONS_DELAY);
+			lateReverbGain = MathHelper.clamp(lateReverbGain, EXTEfx.AL_REVERB_MIN_LATE_REVERB_GAIN, EXTEfx.AL_REVERB_MAX_LATE_REVERB_GAIN);
+			lateReverbDelay = MathHelper.clamp(lateReverbDelay, EXTEfx.AL_REVERB_MIN_LATE_REVERB_DELAY, EXTEfx.AL_REVERB_MAX_LATE_REVERB_DELAY);
+			
+			// apply values
+			EXTEfx.alAuxiliaryEffectSlotf(slot, EXTEfx.AL_EFFECTSLOT_GAIN, 0);
+			{
+				EXTEfx.alEffecti(id, EXTEfx.AL_EFFECT_TYPE, EXTEfx.AL_EFFECT_REVERB);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DENSITY, density);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DIFFUSION, diffusion);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_GAIN, gain);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_GAINHF, gainHF);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DECAY_TIME, decayTime);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_DECAY_HFRATIO, decayHFRatio);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_REFLECTIONS_GAIN, reflectionsGain);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_REFLECTIONS_DELAY, reflectionsDelay);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_LATE_REVERB_GAIN, lateReverbGain);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_LATE_REVERB_DELAY, lateReverbDelay);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_AIR_ABSORPTION_GAINHF, airAbsorptionGainHF);
+				EXTEfx.alEffectf(id, EXTEfx.AL_REVERB_ROOM_ROLLOFF_FACTOR, 0.0f); // automatically managed
+				EXTEfx.alEffecti(id, EXTEfx.AL_REVERB_DECAY_HFLIMIT, decayHFLimit);
+			}
+			EXTEfx.alAuxiliaryEffectSloti(slot, EXTEfx.AL_EFFECTSLOT_EFFECT, id);
+			EXTEfx.alAuxiliaryEffectSlotf(slot, EXTEfx.AL_EFFECTSLOT_GAIN, 1);
 		}
 	}
 
@@ -299,16 +265,5 @@ public class ReverbFilter {
 		x = Math.max(0, Math.min(x, 15));
 		z = Math.max(0, Math.min(z, 15));
 		return heightMap != null && heightMap.get(x, z) <= pos.getY();
-	}
-	
-	public static enum Reverb {
-		HIGH,
-		MID,
-		LOW;
-		
-		public static Reverb fromName(String name) {
-			name = name.toUpperCase();
-			return Reverb.valueOf(name);
-		}
 	}
 }
